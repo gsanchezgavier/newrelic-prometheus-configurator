@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Bump minor dependencies version (#105)
+
 ## [0.0.1] - 2022-09-20
 ### Added
 - First Version of `newrelic-prometheus-configurator`.
