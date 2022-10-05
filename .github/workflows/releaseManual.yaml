@@ -1,0 +1,42 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version including "v" prefix eg: v0.0.1'
+        required: true
+        type: string
+      pre-release:
+        description: 'Push pre-release image'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  calculate-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.release-variables.outputs.tag }}
+    steps:
+      - name: Check valid version
+        run: echo "${{ inputs.version }}" | grep -E '^v[0-9.]*[0-9]$'
+      - name: Add pre-release suffix
+        id: suffix
+        if: ${{ inputs.pre-release }}
+        run: echo '::set-output name=tag-suffix::"-pre"'
+      - name: Build image tag name
+        id: release-variables
+        run: |
+          export IMAGE_TAG=$(echo "${{ inputs.version }}" | sed 's/^v//')
+          IMAGE_TAG+= ${{ steps.suffix.outputs.tag-suffix }}
+          echo ::set-output name=tag::$IMAGE_TAG
+
+  build-push:
+    name: Build and Push images to Docker Hub
+    needs: calculate-tag
+    uses: ./.github/workflows/_push_image.yaml
+    with:
+      version: ${{ inputs.version }}
+      image-tag: ${{needs.calculate-tag.outputs.image-tag}} 
+      image-overwrite-latest: ${{ ! inputs.pre-release }}
