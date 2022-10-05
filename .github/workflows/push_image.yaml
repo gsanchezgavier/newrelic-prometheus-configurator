@@ -1,0 +1,41 @@
+name: Build and Push Configurator image on the selected branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version including "v" prefix eg: v0.0.1'
+        required: true
+        type: string
+      pre-release:
+        description: 'Push pre-release image'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add pre-release suffix
+        if: ${{ inputs.pre-release }}
+        run: |
+          DOCKER_IMAGE_TAG_SUFFIX="-pre"
+          echo "DOCKER_IMAGE_TAG_SUFFIX=$DOCKER_IMAGE_TAG_SUFFIX" >> $GITHUB_ENV
+      - name: Build image tag name
+        id: release-variables
+        run: |
+          echo "${{ inputs.version }}" | grep -E '^v[0-9.]*[0-9]$'
+
+          DOCKER_IMAGE_TAG=$(echo "${{ inputs.version }}" | sed 's/^v//')
+          
+          DOCKER_IMAGE_TAG+=$DOCKER_IMAGE_TAG_SUFFIX
+
+          echo '::set-output name=DOCKER_IMAGE_TAG::$DOCKER_IMAGE_TAG'
+
+      - name: Build and Push images to Docker Hub
+        uses: ./.github/workflows/build_push_image.yaml
+        with:
+          configurator-version: ${{ inputs.version }}
+          image-tag: ${{ steps.release-variables.outputs.DOCKER_IMAGE_TAG }}
+          image-overwrite-latest: ${{ ! inputs.pre-release }}
