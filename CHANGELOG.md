@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### Bugfix
+- Entry test for the RT PR, next version should be 0.0.3
+
 ## [0.0.2] - 2022-10-06
 ### Added
 - `collector_name` metadata is added as part of New Relic remote write config, to identify the scraper component between other sources.
