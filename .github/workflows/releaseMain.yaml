@@ -11,14 +11,13 @@ jobs:
   version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.release-variables.outputs.version }}
+      version: ${{ steps.release-variables.outputs.CONFIG_VERSION }}
     steps:
       - uses: actions/checkout@v3
       - name: Configurator version
         id: release-variables
         run: |
-          export CONFIG_VERSION=main-$(git rev-parse --short HEAD)
-          echo ::set-output name=version::$CONFIG_VERSION
+          echo CONFIG_VERSION=main-$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT
 
   build-push:
     name: Build and Push images to Docker Hub
