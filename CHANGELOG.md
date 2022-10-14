@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
-### Bugfix
+
+## v0.0.4 - 2022-10-14
+
+### 🐞 Bug fixes
 - this is a test
+
+### ⛓️ Dependencies
+- Updated dependencies
 
 ## [0.0.2] - 2022-10-06
 ### Added
